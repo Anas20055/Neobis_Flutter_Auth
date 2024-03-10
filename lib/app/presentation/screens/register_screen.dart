@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:neobis_flutter_auth/app/domain/provider/auth_provider.dart';
 import 'package:neobis_flutter_auth/app/presentation/widgets/app_buttton.dart';
 import 'package:neobis_flutter_auth/app/presentation/widgets/app_field.dart';
 import 'package:neobis_flutter_auth/app/presentation/widgets/app_text_button.dart';
+import 'package:provider/provider.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -26,6 +28,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context); 
     return Scaffold(
       body: Form(
         key: formKey,
@@ -66,7 +69,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   height: 20,
                 ),
                 AppTextField(
-                  controller: passwordController,
+                  controller: passwordConfController,
                   labelText: 'Confirm Password',
                   obsecureText: true,
                 ),
@@ -74,8 +77,34 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   height: 40,
                 ),
                 AppButton(
-                  onPressed: () {
-                    if (formKey.currentState?.validate() == true) {
+                  onPressed: () async{
+                    if (formKey.currentState?.validate() != true) return;
+
+                    if (passwordController.text != passwordConfController.text) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Пароли не совпадают")));
+                    }
+                     else {
+                      try {
+                  await authProvider.signup(
+                    emailController.text,
+                    passwordController.text,
+                  );
+                  // Navigate to home screen or show a success message
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Успешное регистрация '),
+                    ),
+                  );
+                } catch (e) {
+                  // Handle registration error
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(e.toString()),
+                    ),
+                  );
+                }
                     }
                   },
                   labelText: 'Sing Up',

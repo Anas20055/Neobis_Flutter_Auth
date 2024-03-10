@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:neobis_flutter_auth/app/domain/provider/auth_provider.dart';
+import 'package:neobis_flutter_auth/app/presentation/screens/home_page.dart';
 import 'package:neobis_flutter_auth/app/presentation/screens/register_screen.dart';
 import 'package:neobis_flutter_auth/app/presentation/widgets/app_buttton.dart';
 import 'package:neobis_flutter_auth/app/presentation/widgets/app_field.dart';
 import 'package:neobis_flutter_auth/app/presentation/widgets/app_text_button.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -25,6 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
     return Scaffold(
       body: Form(
         key: formKey,
@@ -84,9 +88,21 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: 40,
                 ),
                 AppButton(
-                  onPressed: () {
+                  onPressed: () async {
                     if (formKey.currentState?.validate() == true) {
-                      
+                      try {
+                        await authProvider.login(
+                            emailController.text,
+                            passwordController
+                                .text);
+                        Navigator.push(context,MaterialPageRoute(builder: (context)=>HomeScreen()));
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(e.toString()),
+                    ),
+                  );
+                      }
                     }
                   },
                   labelText: 'Sing In',
