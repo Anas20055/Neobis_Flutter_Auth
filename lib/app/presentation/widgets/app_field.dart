@@ -15,7 +15,7 @@ class AppTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       obscureText: obsecureText,
-      validator: isValueEmpty,
+      validator: obsecureText? validatePassword : isValidEmail,
       controller: controller,
       cursorColor: Colors.lightBlue,
       maxLines: 1,

@@ -10,16 +10,21 @@ class AuthProvider extends ChangeNotifier {
   User? get currentUser => _currentUser;
 
   Future<void> login(String usrEmail, String usrPassword) async {
-    final db = await databaseHelper.initDB();
-    var result = await db.rawQuery(
-        "select * from users where usrEmail = '$usrEmail' AND usrPassword = '$usrPassword'");
-    if (result.isNotEmpty) {
-      _currentUser = User.fromJson(result[0]);
+  final db = await databaseHelper.initDB();
+  var result = await db.rawQuery(
+      "select * from users where usrEmail = '$usrEmail'");
+  if (result.isNotEmpty) {
+    var user = User.fromJson(result[0]);
+    if (user.usrPassword == usrPassword) {
+      _currentUser = user;
       notifyListeners();
     } else {
-      throw Exception('User didn\'t find ');
+      throw Exception('Incorrect password');
     }
+  } else {
+    throw Exception('User not found');
   }
+}
 
   //Sign up
   Future<void> signup(String usrEmail, String usrPassword) async {
@@ -32,7 +37,7 @@ class AuthProvider extends ChangeNotifier {
     if (result.isNotEmpty) {
       throw Exception('User alredy exist');
     } else {
-      await db.insert('users', User(usrEmail: usrEmail, usrPassword: usrEmail).toJson());
+      await db.insert('users', User(usrEmail: usrEmail, usrPassword: usrPassword).toJson());
     }
   }
 }

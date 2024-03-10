@@ -13,9 +13,9 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
-  final passwordConfController = TextEditingController();
+  final emailController = TextEditingController(text: 'atambaev4@gmail.com');
+  final passwordController = TextEditingController(text: 'Atambaev4@');
+  final passwordConfController = TextEditingController(text: 'Atambaev4@');
   final GlobalKey<FormState> formKey = GlobalKey();
 
   @override
@@ -87,8 +87,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                      else {
                       try {
                   await authProvider.signup(
-                    emailController.text,
-                    passwordController.text,
+                     emailController.text,
+                     passwordController.text,
                   );
                   // Navigate to home screen or show a success message
                   Navigator.pop(context);
